@@ -11,18 +11,19 @@ def index():
     if request.method == 'POST':
         jsondata = request.get_data()
         data = json.loads(jsondata)
-#        s,e,f,r= data['smtpserver'],data['emailsubject'],data['filepath'],data['receivesuser']
-        s,e,f,r= data['smtpserver'],data['emailsubject'],data['fromuser'],data['receivesuser']
-        print('server printing',data['fromuser'])
+        s,e,f,fr,r= data['smtpserver'],data['emailsubject'],data['filepath'],data['fromuser'],data['receivesuser']
+ #       s,e,f,r= data['smtpserver'],data['emailsubject'],data['fromuser'],data['receivesuser']
+        #print('server printing',data['fromuser'])
         email = Sendmail(s['server'],s['mailuser'],s['mailpasswd'])
-        email.mess(f['fromer'],e['subject'],e['mess'])
-#        email.files(f['path'],f['files'])
+        email.mess(fr['fromer'],r['receiver'],e['subject'],e['mess'])
+        email.files(f['path'],f['files'])
 
 #        print(e['subject'])
-        print('Henry print:',f['fromer'])
+        #print('Henry print:',fr['fromer'])
         print '邮件正在发送...'
         #email.send(f['fromer'],r['receiver'])
-        email.send('no-reply-devops@cloudin.cn',r['receiver'])
+        print('收件人：', r['receiver'])
+        email.send(fr['fromer'],r['receiver'])
         return '邮件发送成功'
     else:
         return '<h1>只接受post请求！</h1>'

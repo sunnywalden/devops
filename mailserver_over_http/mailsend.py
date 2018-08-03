@@ -14,9 +14,11 @@ class Sendmail:
         self.mail_pass = mail_pass
         self.msg = MIMEMultipart('related') 
 
-    def mess(self,fromer,theme,message):
+    def mess(self,fromer,receiver,theme,message):
         self.msg['Subject'] = theme  # 邮件主题
         self.msg['From'] = fromer
+        self.msg['To'] = ','.join(receiver)
+
         html_msg = '''
                 <html><head><body>
                 <p>%s</p>
@@ -26,15 +28,15 @@ class Sendmail:
         html = MIMEText(html_msg, 'html', 'utf-8')
         self.msg.attach(html)
   
-#    def files(self,path=None,filenames=None):
-#        if path == None and filenames == None:
-#            pass
-#        else:
-#            files = path + filenames
-#            att = MIMEText(open(files, 'rb').read(), 'base64', 'utf-8')
-#            att["Content-Type"] = 'application/octet-stream'
-#            att["Content-Disposition"] = 'attachment; filename=%s' % filenames
-#            Sendmail.msg.attach(att)
+    def files(self,path=None,filenames=None):
+        if path == None and filenames == None:
+            pass
+        else:
+            files = path + filenames
+            att = MIMEText(open(files, 'rb').read(), 'base64', 'utf-8')
+            att["Content-Type"] = 'application/octet-stream'
+            att["Content-Disposition"] = 'attachment; filename=%s' % filenames
+            self.msg.attach(att)
   
     def send(self,fromer,receiver):
         smtp = smtplib.SMTP()
@@ -44,6 +46,7 @@ class Sendmail:
         smtp.login(self.mail_user, self.mail_pass)
         #smtp.sendmail(self.mail_user,fromer,receiver,self.msg.as_string())
         smtp.sendmail(fromer,receiver,self.msg.as_string())
+        #smtp.sendmail(fromer,receiver,self.msg.as_string())
         smtp.quit()
  
 if __name__ == "__main__":
